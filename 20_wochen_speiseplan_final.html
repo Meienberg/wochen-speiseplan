@@ -1,0 +1,2053 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>20-Wochen-Speiseplan</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #f9f9f9; }
+    h1 { text-align: center; }
+    .tag { margin: 1rem 0; background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); cursor: pointer; }
+    .rezept { display: none; margin-top: 0.5rem; font-size: 0.9rem; background: #eef; padding: 0.5rem; border-radius: 5px; }
+    button { display: block; margin: 2rem auto; padding: 1rem 2rem; background: #007bff; color: white; border: none; border-radius: 5px; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>20-Wochen-Speiseplan</h1>
+  <div id="speiseplan"></div>
+  <button onclick="naechsteWoche()">Nächste Woche</button>
+  <script>
+    const wochenplaene = [
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Rote-Bete-Salat mit Feta",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Rote Bete",
+          "Feta",
+          "Walnüsse",
+          "Dressing"
+        ],
+        "zubereitung": "Rote Bete garen, würfeln, alles vermengen."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Tomaten-Mozzarella-Salat",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Tomaten",
+          "Mozzarella",
+          "Basilikum",
+          "Olivenöl"
+        ],
+        "zubereitung": "Alles frisch anrichten."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Lachsburger mit Kräutersoße",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Lachsfilet",
+          "Burgerbrötchen",
+          "Salat",
+          "Joghurtsauce"
+        ],
+        "zubereitung": "Lachs grillen, Burger belegen."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Auberginenröllchen mit Ricotta",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Auberginen",
+          "Ricotta",
+          "Tomatensauce",
+          "Käse"
+        ],
+        "zubereitung": "Auberginen grillen, mit Ricotta füllen, Sauce drüber, backen."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Reissalat mit Mango",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Reis",
+          "Mango",
+          "Paprika",
+          "Kräuter"
+        ],
+        "zubereitung": "Zutaten vermengen, kühl servieren."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Maultaschen mit Röstzwiebeln",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Maultaschen",
+          "Zwiebeln",
+          "Butter"
+        ],
+        "zubereitung": "Maultaschen braten, mit Zwiebeln servieren."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Vegetarische Reispfanne",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Reis",
+          "Paprika",
+          "Zucchini",
+          "Sojasauce",
+          "Eier"
+        ],
+        "zubereitung": "Reis anbraten, Gemüse & Ei zugeben, würzen."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Kartoffel-Zucchini-Puffer",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kartoffeln",
+          "Zucchini",
+          "Mehl",
+          "Eier"
+        ],
+        "zubereitung": "Alles reiben, vermengen, braten."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Möhren-Ingwer-Suppe",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Karotten",
+          "Ingwer",
+          "Kartoffeln",
+          "Sahne"
+        ],
+        "zubereitung": "Kochen, pürieren, servieren."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Forelle Müllerin Art mit Salzkartoffeln",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Forelle",
+          "Mehl",
+          "Butter",
+          "Kartoffeln"
+        ],
+        "zubereitung": "Forelle mehlieren & braten. Kartoffeln kochen."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Gnocchi mit Sahnesauce",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Gnocchi",
+          "Sahne",
+          "Parmesan",
+          "Gewürze"
+        ],
+        "zubereitung": "Gnocchi braten, mit Sauce servieren."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Gefüllte Zucchini mit Dinkel und Gemüse",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Zucchini",
+          "Dinkel",
+          "Gemüse",
+          "Mozzarella"
+        ],
+        "zubereitung": "Zucchini füllen, mit Mozzarella überbacken."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Hähnchengeschnetzeltes mit Reis",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Hähnchenbrust",
+          "Sahne",
+          "Reis"
+        ],
+        "zubereitung": "Hähnchen anbraten, mit Sahne köcheln."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Asiatische Gemüsenudeln",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Mie-Nudeln",
+          "Karotten",
+          "Zucchini",
+          "Sojasauce",
+          "Ingwer"
+        ],
+        "zubereitung": "Nudeln kochen, Gemüse anbraten, alles vermengen."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Zwiebelkuchen",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Zwiebeln",
+          "Sahne",
+          "Eier",
+          "Teig",
+          "Kümmel"
+        ],
+        "zubereitung": "Zwiebeln dünsten, in Teig füllen, backen."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Grießklößchensuppe mit Süßspeise",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Grieß",
+          "Milch",
+          "Ei",
+          "Gemüsebrühe",
+          "Süßspeise z. B. Kaiserschmarrn"
+        ],
+        "zubereitung": "Grießklößchen in Brühe garen, mit Süßspeise servieren."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Zanderfilet mit Gemüsepfanne und Gnocchi",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Zanderfilet",
+          "Gemüse",
+          "Gnocchi"
+        ],
+        "zubereitung": "Zander dünsten, Gemüsepfanne braten, mit Gnocchi servieren."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Käsespätzle",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Spätzle",
+          "Käse",
+          "Zwiebeln",
+          "Butter"
+        ],
+        "zubereitung": "Spätzle & Käse mischen, mit Röstzwiebeln servieren."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Gnocchi mit Tomaten und Mozzarella",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Gnocchi",
+          "Tomaten",
+          "Mozzarella",
+          "Basilikum"
+        ],
+        "zubereitung": "Gnocchi anbraten, mit Tomaten & Käse vermengen."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Hackfleischlasagne",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Hack",
+          "Lasagneplatten",
+          "Tomaten",
+          "Käse"
+        ],
+        "zubereitung": "Schichten & backen."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Nudelsalat mit Pesto",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Nudeln",
+          "Pesto",
+          "Tomaten",
+          "Rucola"
+        ],
+        "zubereitung": "Nudeln kochen, mit Zutaten vermengen."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Kartoffelgemüse mit Käse überbacken",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kartoffeln",
+          "Gemüse",
+          "Käse",
+          "Butter"
+        ],
+        "zubereitung": "Vorkochen, in Ofenform überbacken."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Veggie-Döner mit Falafel",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Fladenbrot",
+          "Falafel",
+          "Salat",
+          "Joghurtsauce"
+        ],
+        "zubereitung": "Alles befüllen & servieren."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Fischsuppe mit Gemüse",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Fischstücke",
+          "Gemüse",
+          "Brühe",
+          "Kräuter"
+        ],
+        "zubereitung": "Alles köcheln lassen und würzen."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Linsen mit Spätzle",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Linsen",
+          "Karotten",
+          "Spätzle",
+          "Zwiebeln"
+        ],
+        "zubereitung": "Linsen garen, mit Spätzle servieren."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Spinat-Pfannkuchen",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Pfannkuchenteig",
+          "Spinat",
+          "Frischkäse"
+        ],
+        "zubereitung": "Pfannkuchen füllen & rollen."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Putengeschnetzeltes mit Bandnudeln",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Putenbrust",
+          "Sahne",
+          "Nudeln"
+        ],
+        "zubereitung": "Geschnetzeltes braten, mit Nudeln servieren."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Vegetarische Quesadillas",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Tortilla",
+          "Käse",
+          "Bohnen",
+          "Mais",
+          "Paprika"
+        ],
+        "zubereitung": "Füllen, braten, servieren."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Tomatenrisotto",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Risottoreis",
+          "Tomaten",
+          "Zwiebeln",
+          "Brühe"
+        ],
+        "zubereitung": "Zutaten langsam köcheln lassen."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Hawaiitoast vegetarisch",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Toast",
+          "Ananas",
+          "Käse",
+          "Tomate"
+        ],
+        "zubereitung": "Toast belegen & überbacken."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Lachs-Spinat-Lasagne",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Lasagneplatten",
+          "Lachs",
+          "Spinat",
+          "Sahne"
+        ],
+        "zubereitung": "Lachs & Spinat schichten, mit Platten & Sauce überbacken."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Flammkuchen mit Gemüse",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Flammkuchenteig",
+          "Sauerrahm",
+          "Zwiebeln",
+          "Paprika"
+        ],
+        "zubereitung": "Teig belegen & backen."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Süßkartoffel-Bohnen-Eintopf",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Süßkartoffeln",
+          "Bohnen",
+          "Tomaten",
+          "Zwiebel"
+        ],
+        "zubereitung": "Alles würfeln, zusammen köcheln lassen."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Hähnchen-Curry mit Reis",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Hähnchen",
+          "Currypaste",
+          "Kokosmilch",
+          "Reis"
+        ],
+        "zubereitung": "Alles zusammen köcheln lassen."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Kichererbsenpfanne mit Spinat",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kichererbsen",
+          "Spinat",
+          "Zwiebel",
+          "Gewürze"
+        ],
+        "zubereitung": "Alles braten & würzen."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Ofenkartoffel mit Kräuterquark",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kartoffel",
+          "Quark",
+          "Kräuter"
+        ],
+        "zubereitung": "Kartoffel backen, mit Quark servieren."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Paprika-Käse-Pasta",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Paprika",
+          "Nudeln",
+          "Frischkäse",
+          "Zwiebel"
+        ],
+        "zubereitung": "Paprika & Zwiebel anbraten, mit Frischkäse und Nudeln vermengen."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Lachsnudeln",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Lachs",
+          "Nudeln",
+          "Sahne",
+          "Zitrone"
+        ],
+        "zubereitung": "Lachs anbraten, Sahnesoße kochen, mit Nudeln servieren."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Vegetarische Tortellini-Auflauf",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Tortellini",
+          "Tomatensauce",
+          "Mozzarella"
+        ],
+        "zubereitung": "Tortellini kochen, mit Sauce & Käse in Form geben, überbacken."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Champignonrahm mit Semmelknödel",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Champignons",
+          "Sahne",
+          "Knödel"
+        ],
+        "zubereitung": "Champignonsauce zubereiten, mit Knödel servieren."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Hackbraten mit Kartoffelpüree",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Hackfleisch",
+          "Zwiebeln",
+          "Kartoffeln"
+        ],
+        "zubereitung": "Hackbraten backen, mit Püree servieren."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Nudelauflauf mit Gemüse",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Nudeln",
+          "Gemüse",
+          "Käse",
+          "Sahne"
+        ],
+        "zubereitung": "Alles in Auflaufform geben & überbacken."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Ratatouille mit Reis",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Aubergine",
+          "Zucchini",
+          "Tomaten",
+          "Paprika",
+          "Reis"
+        ],
+        "zubereitung": "Gemüse schmoren, mit Reis servieren."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Gemüse-Bolognese mit Dinkel",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Dinkel",
+          "Karotten",
+          "Zwiebel",
+          "Tomatensauce"
+        ],
+        "zubereitung": "Dinkel vorkochen, mit Gemüse anbraten und in Sauce köcheln."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Lachs mit Zitronenreis",
+        "kategorie": "fisch",
+        "zutaten": [
+          "4 Lachsfilets",
+          "250g Reis",
+          "1 Zitrone"
+        ],
+        "zubereitung": "Reis mit Zitronensaft kochen. Lachs braten."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Pfannkuchensuppe mit Süßspeise",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Pfannkuchen",
+          "Gemüsebrühe",
+          "Süßspeise z. B. Dampfnudeln"
+        ],
+        "zubereitung": "Pfannkuchen schneiden, in Brühe geben, mit Süßspeise servieren."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Spinatknödel mit Butter",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Spinat",
+          "Brötchen",
+          "Eier",
+          "Mehl",
+          "Butter"
+        ],
+        "zubereitung": "Knödel formen, kochen, mit Butter servieren."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Bratwurst mit Kartoffelstampf",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Bratwurst",
+          "Kartoffeln",
+          "Milch",
+          "Butter"
+        ],
+        "zubereitung": "Würste braten, Stampf zubereiten."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Zimtpfannkuchen mit Apfel",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Pfannkuchenteig",
+          "Äpfel",
+          "Zimt",
+          "Zucker"
+        ],
+        "zubereitung": "Pfannkuchen mit Apfelstücken ausbacken."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Spinat-Feta-Strudel",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Blätterteig",
+          "Spinat",
+          "Feta",
+          "Zwiebel"
+        ],
+        "zubereitung": "Füllen, rollen, backen."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Kartoffelpuffer mit Apfelmus",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kartoffeln",
+          "Mehl",
+          "Ei",
+          "Apfelmus"
+        ],
+        "zubereitung": "Puffer reiben und braten, mit Apfelmus servieren."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Lachs mit Spinat und Rosmarinkartoffeln",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Lachsfilets",
+          "Spinat",
+          "Kartoffeln",
+          "Rosmarin"
+        ],
+        "zubereitung": "Lachs braten, Spinat dünsten, Kartoffeln im Ofen rösten."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Pizza Margherita",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Pizzateig",
+          "Tomaten",
+          "Mozzarella",
+          "Basilikum"
+        ],
+        "zubereitung": "Belegen & backen."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Zucchini-Pilz-Gnocchi",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Gnocchi",
+          "Zucchini",
+          "Pilze",
+          "Sahne"
+        ],
+        "zubereitung": "Zutaten anbraten, mit Gnocchi servieren."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Spaghetti Bolognese",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Hackfleisch",
+          "Tomatensauce",
+          "Spaghetti"
+        ],
+        "zubereitung": "Hack anbraten, mit Sauce köcheln, mit Pasta servieren."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Nudeln mit Erbsen-Sahne-Sauce",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Nudeln",
+          "Erbsen",
+          "Sahne",
+          "Parmesan"
+        ],
+        "zubereitung": "Sahnesauce zubereiten, mit Nudeln vermengen."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Spaghetti aglio e olio",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Spaghetti",
+          "Knoblauch",
+          "Olivenöl",
+          "Chiliflocken",
+          "Petersilie"
+        ],
+        "zubereitung": "Knoblauch in Öl anbraten, mit Chili & Pasta vermengen."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Polenta mit Gemüse",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Polenta",
+          "Paprika",
+          "Zucchini",
+          "Parmesan",
+          "Butter"
+        ],
+        "zubereitung": "Polenta kochen, Gemüse anbraten, alles anrichten."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Backfisch mit Kartoffelsalat",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Fischfilets",
+          "Paniermehl",
+          "Kartoffeln",
+          "Essig",
+          "Öl"
+        ],
+        "zubereitung": "Fisch panieren & braten. Kartoffelsalat zubereiten."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Pilzrisotto",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Risottoreis",
+          "Pilze",
+          "Weißwein",
+          "Parmesan"
+        ],
+        "zubereitung": "Pilze anbraten, Risotto kochen, Parmesan unterheben."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Kartoffelsuppe mit Würze",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kartoffeln",
+          "Karotten",
+          "Lauch",
+          "Gemüsebrühe",
+          "Sahne"
+        ],
+        "zubereitung": "Gemüse kochen, pürieren, mit Sahne abschmecken."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Schnitzel mit Kartoffelsalat",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Schnitzel",
+          "Panade",
+          "Kartoffelsalat"
+        ],
+        "zubereitung": "Schnitzel panieren, braten, mit Salat servieren."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Gemüse-Käsespieße",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Paprika",
+          "Zucchini",
+          "Käsewürfel"
+        ],
+        "zubereitung": "Auf Spieße stecken, grillen oder braten."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Pasta mit Tomatensauce",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Pasta",
+          "Tomaten",
+          "Zwiebeln",
+          "Knoblauch",
+          "Basilikum"
+        ],
+        "zubereitung": "Tomatensauce zubereiten, Pasta kochen, alles vermengen."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Gemüsetarte",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Mürbeteig",
+          "Gemüse",
+          "Eier",
+          "Sahne"
+        ],
+        "zubereitung": "Teig belegen, mit Guss übergießen, backen."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Fischfilet mit Erbsenpüree",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Fisch",
+          "Erbsen",
+          "Kartoffeln",
+          "Sahne"
+        ],
+        "zubereitung": "Fisch braten. Erbsenpüree zubereiten."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Veggie-Burger",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Brötchen",
+          "Gemüsepatty",
+          "Salat",
+          "Tomaten",
+          "Soße"
+        ],
+        "zubereitung": "Patty braten, Burger zusammenbauen."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Karottenquiche mit Mais",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Karotten",
+          "Mais",
+          "Sahne",
+          "Eier",
+          "Teig"
+        ],
+        "zubereitung": "Füllung zubereiten, in Teig geben, backen."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Schaschlik mit Paprika",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Fleischwürfel",
+          "Paprika",
+          "Zwiebeln",
+          "Spieße"
+        ],
+        "zubereitung": "Spieße grillen oder braten."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Rosenkohlauflauf",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Rosenkohl",
+          "Kartoffeln",
+          "Sahne",
+          "Käse"
+        ],
+        "zubereitung": "Rosenkohl vorkochen, mit restlichen Zutaten im Ofen backen."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Couscous mit Ofengemüse",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Couscous",
+          "Paprika",
+          "Zucchini",
+          "Kürbis",
+          "Olivenöl"
+        ],
+        "zubereitung": "Gemüse im Ofen rösten, Couscous zubereiten, alles mischen."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Nudeln mit Tomatensauce",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Nudeln",
+          "Tomatensauce",
+          "Kräuter"
+        ],
+        "zubereitung": "Alles kochen & servieren."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Schollenfilet mit Salzkartoffeln und Senfsoße",
+        "kategorie": "fisch",
+        "zutaten": [
+          "4 Schollenfilets",
+          "Kartoffeln",
+          "Senf",
+          "Sahne",
+          "Salat"
+        ],
+        "zubereitung": "Scholle panieren und braten. Senfsoße kochen. Mit Kartoffeln und Salat servieren."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Birnen-Gorgonzola-Nudeln",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Birnen",
+          "Gorgonzola",
+          "Nudeln",
+          "Sahne"
+        ],
+        "zubereitung": "Alles in Pfanne schmelzen lassen, mit Pasta servieren."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Gefüllte Paprika mit Couscous",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Paprika",
+          "Couscous",
+          "Gemüse",
+          "Feta"
+        ],
+        "zubereitung": "Paprika füllen & im Ofen garen."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Würstchengulasch mit Nudeln",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Würstchen",
+          "Paprika",
+          "Tomaten",
+          "Nudeln"
+        ],
+        "zubereitung": "Würstchen & Gemüse braten, mit Nudeln servieren."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Semmelknödel mit Pilzsoße",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Knödel",
+          "Pilze",
+          "Sahne",
+          "Zwiebeln"
+        ],
+        "zubereitung": "Pilze braten, mit Sahne ablöschen, Knödel servieren."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Vegetarische Wraps mit Hummus",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Tortilla",
+          "Hummus",
+          "Salat",
+          "Gemüse"
+        ],
+        "zubereitung": "Tortilla bestreichen, belegen, rollen."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Zucchini-Lasagne",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Zucchini",
+          "Tomaten",
+          "Ricotta",
+          "Käse"
+        ],
+        "zubereitung": "Zutaten schichten, im Ofen garen."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Fischgratin mit Spinat",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Fischfilets",
+          "Spinat",
+          "Sahne",
+          "Käse"
+        ],
+        "zubereitung": "Fisch & Spinat schichten, mit Sahnesoße übergießen und überbacken."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Ofengemüse mit Feta",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Gemüse",
+          "Feta",
+          "Olivenöl"
+        ],
+        "zubereitung": "Gemüse würzen, mit Feta im Ofen backen."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Fenchel-Orangen-Salat mit Walnüssen",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Fenchel",
+          "Orangen",
+          "Walnüsse",
+          "Olivenöl"
+        ],
+        "zubereitung": "Alles frisch schneiden & anrichten."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Gefüllte Paprika mit Hackfleisch",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Paprika",
+          "Hackfleisch",
+          "Reis"
+        ],
+        "zubereitung": "Paprika füllen und backen."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Dinkel-Gemüse-Auflauf",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Dinkel",
+          "Gemüse",
+          "Käse",
+          "Sahne"
+        ],
+        "zubereitung": "Alles in Auflaufform geben, überbacken."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Nudel-Gemüse-Pfanne mit Pesto",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Nudeln",
+          "Gemüse",
+          "Pesto"
+        ],
+        "zubereitung": "Nudeln kochen, Gemüse anbraten, mit Pesto vermengen."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Bulgur-Salat mit Feta",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Bulgur",
+          "Gurke",
+          "Tomate",
+          "Feta"
+        ],
+        "zubereitung": "Bulgur kochen, alles würfeln, vermengen."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Fischstäbchen mit Kartoffelpüree",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Fischstäbchen",
+          "Kartoffeln",
+          "Milch",
+          "Butter"
+        ],
+        "zubereitung": "Fischstäbchen backen. Kartoffelpüree zubereiten."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Minestrone",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Gemüse",
+          "Nudeln",
+          "Tomaten",
+          "Brühe"
+        ],
+        "zubereitung": "Alles zusammen als Suppe kochen."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Brokkoli-Cashew-Pfanne",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Brokkoli",
+          "Cashews",
+          "Sojasauce",
+          "Karotten",
+          "Reis"
+        ],
+        "zubereitung": "Gemüse braten, mit Cashews & Sojasauce servieren."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Rindergulasch mit Spätzle",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Rindfleisch",
+          "Zwiebel",
+          "Paprika",
+          "Spätzle"
+        ],
+        "zubereitung": "Fleisch schmoren, mit Spätzle servieren."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Reibekuchen mit Kräuterquark",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kartoffeln",
+          "Ei",
+          "Mehl",
+          "Quark",
+          "Kräuter"
+        ],
+        "zubereitung": "Reibekuchen braten, mit Quark servieren."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Lauch-Käse-Suppe",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Lauch",
+          "Schmelzkäse",
+          "Kartoffeln",
+          "Brühe"
+        ],
+        "zubereitung": "Alles kochen, pürieren, mit Käse abschmecken."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Ricotta-Spinat-Cannelloni",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Cannelloni",
+          "Spinat",
+          "Ricotta",
+          "Tomatensauce"
+        ],
+        "zubereitung": "Füllen, in Sauce im Ofen garen."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Garnelenpfanne mit Gemüse",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Garnelen",
+          "Paprika",
+          "Zucchini",
+          "Knoblauch"
+        ],
+        "zubereitung": "Alles in Pfanne braten und würzen."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Linsencurry",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Linsen",
+          "Kokosmilch",
+          "Gewürze",
+          "Zwiebel"
+        ],
+        "zubereitung": "Linsen mit Gewürzen & Kokosmilch garen."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Gemüsegratin mit Béchamelsauce",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Gemüse",
+          "Milch",
+          "Butter",
+          "Mehl",
+          "Käse"
+        ],
+        "zubereitung": "Gemüse vorgaren, mit Sauce und Käse überbacken."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Burger mit Rindfleischpatty",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Rindfleisch",
+          "Brötchen",
+          "Salat",
+          "Soße"
+        ],
+        "zubereitung": "Patties grillen, Burger zusammenstellen."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Pasta mit Brokkoli-Pesto",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Nudeln",
+          "Brokkoli",
+          "Parmesan",
+          "Nüsse"
+        ],
+        "zubereitung": "Brokkoli pürieren, mit Nudeln vermengen."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Kürbisgnocchi",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kürbis",
+          "Mehl",
+          "Gnocchi",
+          "Salbei",
+          "Butter"
+        ],
+        "zubereitung": "Gnocchi formen, braten, mit Salbei servieren."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Bunte Gemüsepfanne mit Tofu",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Paprika",
+          "Zucchini",
+          "Tofu",
+          "Sojasauce"
+        ],
+        "zubereitung": "Gemüse & Tofu braten, würzen."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Fischcurry mit Reis",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Fischfilets",
+          "Currypaste",
+          "Kokosmilch",
+          "Reis"
+        ],
+        "zubereitung": "Fisch & Gemüse im Curry kochen. Mit Reis servieren."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Cremige Pilz-Pasta",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Pasta",
+          "Pilze",
+          "Sahne",
+          "Parmesan"
+        ],
+        "zubereitung": "Pilze anbraten, Sahne und Käse zugeben, mit Pasta vermengen."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Cremige Zucchinisuppe",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Zucchini",
+          "Kartoffeln",
+          "Brühe",
+          "Sahne"
+        ],
+        "zubereitung": "Kochen, pürieren, servieren."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Schweinefilet mit Pilzrahmsoße",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Schweinefilet",
+          "Pilze",
+          "Sahne"
+        ],
+        "zubereitung": "Filet anbraten, Sauce kochen."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Spargel mit Kartoffeln",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Spargel",
+          "Kartoffeln",
+          "Butter",
+          "Petersilie"
+        ],
+        "zubereitung": "Kochen & mit Butter servieren."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Kürbissuppe mit Kürbiskernen",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kürbis",
+          "Zwiebel",
+          "Sahne",
+          "Kürbiskerne"
+        ],
+        "zubereitung": "Kochen, pürieren, mit Kernen garnieren."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Gemüserisotto",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Risottoreis",
+          "Zucchini",
+          "Erbsen",
+          "Parmesan",
+          "Zwiebel"
+        ],
+        "zubereitung": "Gemüse & Reis langsam garen, Parmesan unterheben."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Ofenlachs mit Süßkartoffeln",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Lachs",
+          "Süßkartoffeln",
+          "Olivenöl",
+          "Gewürze"
+        ],
+        "zubereitung": "Alles würzen & im Ofen backen."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Tomatensuppe mit Süßspeise",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Tomaten",
+          "Zwiebel",
+          "Sahne",
+          "Süßspeise z. B. Pfannkuchen"
+        ],
+        "zubereitung": "Suppe kochen & pürieren, mit Süßspeise servieren."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Gemüselasagne",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Lasagneplatten",
+          "Zucchini",
+          "Aubergine",
+          "Tomatensauce",
+          "Käse"
+        ],
+        "zubereitung": "Schichten & im Ofen backen."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Chili con Carne",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Hackfleisch",
+          "Bohnen",
+          "Mais",
+          "Tomaten"
+        ],
+        "zubereitung": "Alles zusammen anbraten und köcheln."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Erbsensuppe mit Minze",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Erbsen",
+          "Minze",
+          "Zwiebel",
+          "Brühe"
+        ],
+        "zubereitung": "Kochen, pürieren, abschmecken."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Bohneneintopf",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Weiße Bohnen",
+          "Karotten",
+          "Sellerie",
+          "Tomaten"
+        ],
+        "zubereitung": "Alles köcheln lassen, würzen."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Ofentomaten mit Kräuterreis",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Tomaten",
+          "Reis",
+          "Kräuter",
+          "Olivenöl"
+        ],
+        "zubereitung": "Tomaten im Ofen rösten, mit Kräuterreis servieren."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Gebratener Pangasius mit Reis",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Pangasiusfilets",
+          "Reis",
+          "Zitrone",
+          "Gewürze"
+        ],
+        "zubereitung": "Fisch würzen & braten, mit Reis servieren."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Grünkernbratlinge mit Kräuterquark",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Grünkern",
+          "Zwiebel",
+          "Ei",
+          "Quark",
+          "Kräuter"
+        ],
+        "zubereitung": "Grünkern kochen, Masse formen, braten, mit Quark servieren."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Vegetarisches Moussaka",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Auberginen",
+          "Kartoffeln",
+          "Tomatensauce",
+          "Bechamel",
+          "Käse"
+        ],
+        "zubereitung": "Schichten und im Ofen garen."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Gyros mit Tzatziki und Reis",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Schweinefleisch",
+          "Tzatziki",
+          "Reis"
+        ],
+        "zubereitung": "Gyros anbraten, mit Beilagen servieren."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Lauch-Kartoffel-Gratin",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Lauch",
+          "Kartoffeln",
+          "Sahne",
+          "Käse"
+        ],
+        "zubereitung": "Vorkochen, in Form geben, überbacken."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Kichererbsenbällchen mit Salat",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kichererbsen",
+          "Zwiebel",
+          "Kreuzkümmel",
+          "Salat"
+        ],
+        "zubereitung": "Bällchen formen & braten, mit Salat servieren."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Rote-Linsen-Dal",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Rote Linsen",
+          "Kokosmilch",
+          "Currypaste",
+          "Zwiebel"
+        ],
+        "zubereitung": "Alles köcheln lassen, würzen."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Seelachsfilet in Tomatensoße mit Reis",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Seelachsfilets",
+          "Tomaten",
+          "Zwiebel",
+          "Reis"
+        ],
+        "zubereitung": "Fisch in Tomatensoße schmoren, mit Reis servieren."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Gemüsestrudel mit Joghurtdip",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Blätterteig",
+          "Gemüse",
+          "Joghurt",
+          "Kräuter"
+        ],
+        "zubereitung": "Gemüse in Teig einwickeln, backen, mit Dip servieren."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Maispuffer mit Salat",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Mais",
+          "Eier",
+          "Mehl",
+          "Salat"
+        ],
+        "zubereitung": "Puffer braten, mit Salat servieren."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Fleischküchle mit Kartoffeln und Gemüse",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Hackfleisch",
+          "Ei",
+          "Semmelbrösel",
+          "Kartoffeln",
+          "Gemüse"
+        ],
+        "zubereitung": "Küchle formen & braten. Beilagen servieren."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Bratkartoffeln mit Spiegelei",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Kartoffeln",
+          "Eier",
+          "Zwiebel",
+          "Petersilie"
+        ],
+        "zubereitung": "Kartoffeln braten, Eier dazu braten, servieren."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Kaiserschmarrn mit Apfelmus",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Mehl",
+          "Eier",
+          "Milch",
+          "Zucker",
+          "Apfelmus"
+        ],
+        "zubereitung": "Teig zubereiten, in Pfanne backen und zerrupfen, mit Apfelmus servieren."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Gemüsecurry",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Gemüse",
+          "Currypaste",
+          "Kokosmilch",
+          "Reis"
+        ],
+        "zubereitung": "Gemüse braten, mit Curry & Kokosmilch köcheln."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Fischpfanne mit Paprika und Zucchini",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Fischfilet",
+          "Paprika",
+          "Zucchini",
+          "Zwiebeln"
+        ],
+        "zubereitung": "Gemüse & Fischstücke braten und würzen."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Zucchini-Tomaten-Pfanne",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Zucchini",
+          "Tomaten",
+          "Knoblauch",
+          "Olivenöl"
+        ],
+        "zubereitung": "Alles anbraten, würzen, servieren."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Tomaten-Zucchini-Gratin",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Zucchini",
+          "Tomaten",
+          "Käse",
+          "Sahne"
+        ],
+        "zubereitung": "Gemüse schichten, mit Käse überbacken."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Cevapcici mit Ajvar und Reis",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Cevapcici",
+          "Ajvar",
+          "Reis"
+        ],
+        "zubereitung": "Cevapcici braten, mit Beilagen servieren."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Tofu-Gemüse-Pfanne",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Tofu",
+          "Gemüse",
+          "Sojasauce",
+          "Reis"
+        ],
+        "zubereitung": "Tofu und Gemüse braten, würzen, mit Reis servieren."
+      }
+    }
+  ],
+  [
+    {
+      "tag": "Montag",
+      "gericht": {
+        "name": "Zucchini-Nudeln mit Feta",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Zucchini",
+          "Feta",
+          "Knoblauch",
+          "Olivenöl"
+        ],
+        "zubereitung": "Zucchini spiralisieren, anbraten, mit Feta servieren."
+      }
+    },
+    {
+      "tag": "Dienstag",
+      "gericht": {
+        "name": "Linsen-Bolognese mit Pasta",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Linsen",
+          "Tomaten",
+          "Karotten",
+          "Pasta",
+          "Zwiebel"
+        ],
+        "zubereitung": "Gemüse anbraten, Linsen und Tomaten zugeben, köcheln."
+      }
+    },
+    {
+      "tag": "Mittwoch",
+      "gericht": {
+        "name": "Kabeljaufilet mit Currygemüse",
+        "kategorie": "fisch",
+        "zutaten": [
+          "Kabeljau",
+          "Currypaste",
+          "Gemüse",
+          "Kokosmilch"
+        ],
+        "zubereitung": "Fisch dämpfen, Gemüse in Currysoße kochen."
+      }
+    },
+    {
+      "tag": "Donnerstag",
+      "gericht": {
+        "name": "Vegetarisches Thai-Curry",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Gemüse",
+          "Currypaste",
+          "Kokosmilch",
+          "Reis"
+        ],
+        "zubereitung": "Gemüse & Curry kochen, mit Reis servieren."
+      }
+    },
+    {
+      "tag": "Freitag",
+      "gericht": {
+        "name": "Auberginen-Curry",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Auberginen",
+          "Kokosmilch",
+          "Currypaste",
+          "Zwiebel"
+        ],
+        "zubereitung": "Auberginen anbraten, mit Sauce köcheln."
+      }
+    },
+    {
+      "tag": "Samstag",
+      "gericht": {
+        "name": "Hähnchenkeulen mit Ofengemüse",
+        "kategorie": "fleisch",
+        "zutaten": [
+          "Hähnchenkeulen",
+          "Gemüse",
+          "Olivenöl"
+        ],
+        "zubereitung": "Würzen & im Ofen garen."
+      }
+    },
+    {
+      "tag": "Sonntag",
+      "gericht": {
+        "name": "Maultaschen mit Gemüsefüllung",
+        "kategorie": "vegetarisch",
+        "zutaten": [
+          "Maultaschen",
+          "Spinat",
+          "Frischkäse"
+        ],
+        "zubereitung": "Maultaschen füllen, in Brühe oder angebraten servieren."
+      }
+    }
+  ]
+];
+
+    let aktuelleWoche = 0;
+    function zeigeWoche() {
+      const container = document.getElementById("speiseplan");
+      container.innerHTML = "";
+      const woche = wochenplaene[aktuelleWoche];
+      woche.forEach(eintrag => {
+        const div = document.createElement("div");
+        div.className = "tag";
+        const header = document.createElement("div");
+        header.innerHTML = `<strong>${eintrag.tag}:</strong> ${eintrag.gericht.name}`;
+        const rezept = document.createElement("div");
+        rezept.className = "rezept";
+        rezept.innerHTML = `<strong>Zutaten:</strong><br>${eintrag.gericht.zutaten.join("<br>")}<br><br><strong>Zubereitung:</strong><br>${eintrag.gericht.zubereitung}`;
+        div.appendChild(header);
+        div.appendChild(rezept);
+        div.onclick = () => rezept.style.display = rezept.style.display === "block" ? "none" : "block";
+        container.appendChild(div);
+      });
+    }
+    function naechsteWoche() {
+      aktuelleWoche = (aktuelleWoche + 1) % wochenplaene.length;
+      zeigeWoche();
+    }
+    zeigeWoche();
+  </script>
+</body>
+</html>
